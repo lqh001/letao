@@ -60,8 +60,11 @@
     url:'/api/address/queryAddress',
     type:'get',
     success:function(info) {
-      if(info.error) return location.href = '/user/login.html';
+      // 未登录
+      if(info.error) return location.href = '/user/login.html?url=' + location.href;
+      // console.log(info);info为数组
       // 获取数据
+      // console.log({list:info});包装
       var str = template('tpl',{list:info});
       $('.mui-table-view').html(str);
     }
