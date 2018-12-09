@@ -52,9 +52,9 @@
       // 发送ajax请求
       $.ajax({
         url:'/api/user/login',
-        data:data,
+        data: data,
         type:'post',
-        dataType:'json',
+        // dataType:'json',
         success:function(info){
           if(info.success) return location.href="/user/index.html";
            // 提示
