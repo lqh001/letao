@@ -12,6 +12,11 @@
     <link rel="stylesheet" href="../res/fontAwesome/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="../css/common.css"/>
     <link rel="stylesheet" href="../css/user.css"/>
+    <style>
+    .warrp {
+      padding: 0 20px;
+    }
+    </style>
 </head>
 <body>
 <div class="cz_layout bgg">
@@ -21,34 +26,10 @@
     </header>
     <div class="cz_container">
         <ul class="mui-table-view">
-            <li class="mui-table-view-cell">
-                <div class="mui-slider-right mui-disabled">
-                    <a class="mui-btn mui-btn-red">删除</a>
-                </div>
-                <a href="addressManage.html" class="mui-navigate-right mui-slider-handle">
-                    <div class="delivery">邮编：<span>100000</span>&nbsp;收货人：<span>黄晓明</span></div>
-                    <div class="address">北京市海淀区西三旗街道经验龙办公楼传智播客教育科技有限公司</div>
-                </a>
-            </li>
-            <li class="mui-table-view-cell">
-                <div class="mui-slider-right mui-disabled">
-                    <a class="mui-btn mui-btn-red">删除</a>
-                </div>
-                <a href="addressManage.html" class="mui-navigate-right mui-slider-handle">
-                    <div class="delivery">邮编：<span>100000</span>&nbsp;收货人：<span>黄晓明</span></div>
-                    <div class="address">北京市海淀区西三旗街道经验龙办公楼传智播客教育科技有限公司</div>
-                </a>
-            </li>
-            <li class="mui-table-view-cell">
-                <div class="mui-slider-right mui-disabled">
-                    <a class="mui-btn mui-btn-red">删除</a>
-                </div>
-                <a href="addressManage.html" class="mui-navigate-right mui-slider-handle">
-                    <div class="delivery">邮编：<span>100000</span>&nbsp;收货人：<span>黄晓明</span></div>
-                    <div class="address">北京市海淀区西三旗街道经验龙办公楼传智播客教育科技有限公司</div>
-                </a>
-            </li>
         </ul>
+    </div>
+    <div class="warrp">
+      <a href="/user/addAddress.html" class="mui-btn mui-btn-primary btn_login">新增收货地址</a>
     </div>
     <footer class="cz_tabs">
         <a class="tab_home fa fa-home" href="../index.html"><span>首页</span></a>
@@ -57,6 +38,53 @@
         <a class="tab_user fa fa-user" href="../user/index.html"><span>会员中心</span></a>
     </footer>
 </div>
+<script src="../js/jquery-1.12.4.js"></script>
 <script src="../res/mui/js/mui.min.js"></script>
+<script src="../js/template-web.js"></script>
+<script type="text/template" id="tpl">
+  {{each list val}}
+  <li class="mui-table-view-cell">
+      <div class="mui-slider-right mui-disabled">
+          <a class="mui-btn mui-btn-red delete" data="{{val.id}}">删除</a>
+      </div>
+      <a href="addressManage.html" class="mui-navigate-right mui-slider-handle">
+          <div class="delivery">邮编：<span>{{val.postCode}}</span>&nbsp;收货人：<span>{{val.recipients}}</span></div>
+          <div class="address">{{val.addressDetail}}</div>
+      </a>
+  </li>
+  {{/each}}
+</script>
+<script>
+  // 获取地址列表
+  $.ajax({
+    url:'/api/address/queryAddress',
+    type:'get',
+    success:function(info) {
+      if(info.error) return location.href = '/user/login.html';
+      // 获取数据
+      var str = template('tpl',{list:info});
+      $('.mui-table-view').html(str);
+    }
+  })
+
+  // 删除地址
+  $('.mui-table-view').on('click','.delete',function () {
+     var id = $(this).attr('data');
+     var _this = $(this);
+     // 发送ajax请求
+     $.ajax({
+       url:'/api/address/deleteAddress',
+       data:{'id':id},
+       type:'post',
+       success: function (info) {
+         if(info.success){
+           _this.parents('li').fadeOut(function(){
+              $(this).remove();
+           });
+         }
+       }
+     }) 
+  })
+</script>
 </body>
 </html>
