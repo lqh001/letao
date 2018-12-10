@@ -129,6 +129,10 @@
            
         var str = template('tpl',info);
         $('#detail').html(str);
+        // 轮播图
+        mui('.mui-slider').slider({
+            interval:3000 
+        });
       }
     });
     
@@ -184,10 +188,7 @@
       
     })
    
-    mui(function(){
-        mui('.mui-slider').slider({
-            interval:3000 
-        });
+    mui(function(){      
         mui('.mui-scroll-wrapper').scroll();
     });
 </script>

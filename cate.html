@@ -22,13 +22,7 @@
     </header>
     <div class="cz_container">
         <div class="cate_slide">
-            <ul>
-                <li class="now">运动馆</li>
-                <li>女士馆</li>
-                <li>男士馆</li>
-                <li>帆布馆</li>
-                <li>户外馆</li>
-            </ul>
+            
         </div>
         <div class="cate_content">
             <div class="mui-scroll-wrapper">
@@ -45,16 +39,9 @@
                         <li><a href="#"><img src="images/brand8.png" alt=""/><p>耐克</p></a></li>
                         <li><a href="#"><img src="images/brand1.png" alt=""/><p>耐克</p></a></li>
                     </ul>
-                    <span class="title">运动休闲</span>
-                    <ul class="mui-clearfix">
-                        <li><a href="#"><img src="images/brand1.png" alt=""/><p>耐克</p></a></li>
-                        <li><a href="#"><img src="images/brand2.png" alt=""/><p>耐克</p></a></li>
-                        <li><a href="#"><img src="images/brand3.png" alt=""/><p>耐克</p></a></li>
-                        <li><a href="#"><img src="images/brand4.png" alt=""/><p>耐克</p></a></li>
-                        <li><a href="#"><img src="images/brand5.png" alt=""/><p>耐克</p></a></li>
-                        <li><a href="#"><img src="images/brand6.png" alt=""/><p>耐克</p></a></li>
-                        <li><a href="#"><img src="images/brand7.png" alt=""/><p>耐克</p></a></li>
-                        <li><a href="#"><img src="images/brand8.png" alt=""/><p>耐克</p></a></li>
+                    <span class="title second-title">运动休闲</span>
+                    <ul class="mui-clearfix" id="second-cate">
+                        
                     </ul>
                 </div>
             </div>
@@ -67,18 +54,62 @@
         <a class="tab_user fa fa-user" href="user/index.html"><span>会员中心</span></a>
     </footer>
 </div>
+<script src="/js/jquery-1.12.4.js"></script>
+<script src="/js/template-web.js"></script>
 <script src="res/mui/js/mui.min.js"></script>
+<!-- 顶级分类模板 -->
+<script type="text/html" id="tpl">
+  <ul>
+    <!--  class="now" -->
+    {{each rows val}}
+    <li data-id="{{val.id}}">{{val.categoryName}}</li>
+    {{/each}}
+  </ul>
+</script>
+<!-- 二级分类模板 -->
+<script type="text/html" id="tpl2">
+  {{each rows val}}
+  <li><a href="javascript:;"><img src="/api{{val.brandLogo}}" alt=""/><p>{{val.brandName}}</p></a></li>
+  {{/each}}
+</script>
 <script>
+    // 发送请求，获取一级分类目录
+    $.ajax({
+      url:'/api/category/queryTopCategory',
+      type:'get',
+      success: function (info) {
+        //info 为对象。不需要包装
+        var str = template('tpl',info);
+        $('.cate_slide').html(str);
+        //默认展示一个栏目，页面刷新时，默认展示一个栏目
+        // 想让哪个dom触发某个事件，就给谁注册触发事件，比如刷新页面给第一个li，自动出发点击事件
+        $('.cate_slide ul li:first-child').trigger('click');
+
+      }
+    });
+
+    // 点击一级分类时，获取相应的二级分类目录(因为是后来的数据，所以要用时间委托注册点击事件)
+    $('.cate_slide').on('click','li',function () {
+
+      var id = $(this).attr('data-id');
+      var top_cate = $(this).text();
+      $(this).addClass('now').siblings().removeClass('now');//添加类名
+
+      $.ajax({
+        url:'/api/category/querySecondCategory',
+        data:{id:id},
+        type:'get',
+        success:function (info) {
+          //info 为对象。不需要包装;
+          var str = template('tpl2',info);
+          $('#second-cate').html(str);
+          $('.second-title').text(top_cate);
+        }
+      })
+    });
+
     mui(function(){
-        mui('.mui-scroll-wrapper').scroll({
-            scrollY: true, //是否竖向滚动
-            scrollX: false, //是否横向滚动
-            startX: 0, //初始化时滚动至x
-            startY: 0, //初始化时滚动至y
-            indicators: false, //是否显示滚动条
-            deceleration:0.0006, //阻尼系数,系数越小滑动越灵敏
-            bounce: true, //是否启用回弹
-        });
+        mui('.mui-scroll-wrapper').scroll();
     });
 </script>
 </body>
