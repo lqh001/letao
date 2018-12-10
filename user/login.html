@@ -46,6 +46,33 @@
     <script src="../res/mui/js/mui.min.js"></script>
     <script src="/js/jquery-1.12.4.js"></script>
     <script>
+    // 先看地址中有没有带参数过来
+     // 1. 判断有没有 url 并且获得 url 参数的值
+        // 一个地址是由若干部分构成：
+        // 协议 protocol
+        // 域名（主机）host
+        // 端口 port
+        // 路径 pathname
+        // 参数 search
+        // 锚点 hash
+        // 并且在 js 中通过 location 可以获得这些组成分成
+        // console.log(location)
+    var seach = location.search.slice(1);//去掉？号
+    // console.log(seach);
+    // 使用正则匹配 url 参数的值
+    var reg = /url=(.+)/;
+    // 匹配到的地址
+    var match = reg.exec(seach);
+    // console.log(match[1]);
+    // if(match){
+    //   match = match[1];
+    // }else{
+    //   match = '/';
+    // }
+    var url = match && match[1]; 
+        url = url || '/';
+    console.log(match);
+    
     $('form').on('submit',function () {
       var data = $(this).serialize();
       console.log(data);
@@ -56,7 +83,7 @@
         type:'post',
         // dataType:'json',
         success:function(info){
-          if(info.success) return location.href="/user/index.html";
+          if(info.success) return location.href= match;
            // 提示
            alert(info.message);
         }
